@@ -3,13 +3,12 @@ from threading import Thread
 import time
 from person import Person
 
-
 # GLOBAL CONSTANTS
 HOST = 'localhost'
 PORT = 5500
 ADDR = (HOST, PORT)
 MAX_CONNECTIONS = 10
-BUFSIZ = 1024
+BUFSIZE = 1024
 
 # GLOBAL VARIABLES
 persons = []
@@ -26,7 +25,7 @@ def broadcast(msg, name):
     """
     for person in persons:
         client = person.client
-        client.send(bytes(name + ": ", "utf8") + msg)
+        client.send(bytes(name, "utf8") + msg)
 
 
 def client_communication(person):
@@ -37,23 +36,27 @@ def client_communication(person):
     """
     client = person.client
 
-    # get client name
-    name = client.recv(BUFSIZ).decode("utf8")
+    # get persons name
+    name = client.recv(BUFSIZE).decode("utf8")
+    person.set_name(name)
     msg = bytes(f"{name} has joined the chat!", "utf8")
-    broadcast(msg, name)  # broadcast welcome message
+    broadcast(msg, " ")  # broadcast welcome message
 
     while True:
         try:
-            msg = client.recv(BUFSIZ)
-            print(f"{name}: ", msg.decode("utf8"))
+            msg = client.recv(BUFSIZE)
+
             if msg == bytes("{quit}", "utf8"):
                 broadcast(f"{name} has left the chat...", "")
                 client.send(bytes("{quit}", "utf8"))
                 client.close()
                 persons.remove(person)
+                print(f"[DISCONNECTED] {name} disconnected")
                 break
             else:
-                client.send(msg, name)
+                client.send(msg, name+": ")
+                print(f"{name}: ", msg.decode("utf8"))
+
         except Exception as e:
             print("[EXCEPTION]", e)
             break
@@ -82,7 +85,7 @@ def wait_for_connection():
 
 if __name__ == '__main__':
     SERVER.listen(MAX_CONNECTIONS)    # listen for connections
-    print("Waiting for a connection...")
+    print("[STARTED] Waiting for a connection...")
     ACCEPT_THREAD = Thread(target=wait_for_connection)
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
