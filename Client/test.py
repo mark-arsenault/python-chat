@@ -43,7 +43,7 @@ def send_messages(msg):
 
 receive_thread = Thread(target=receive_messages)
 receive_thread.start()
-
 send_messages("Mark")
-send_messages("Hello")
-send_messages("quit")
+time.sleep(10)
+send_messages("hello")
+# send_messages("{quit}")
