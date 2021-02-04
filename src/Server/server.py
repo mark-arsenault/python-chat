@@ -3,6 +3,7 @@ from threading import Thread
 import time
 from person import Person
 
+
 # GLOBAL CONSTANTS
 HOST = 'localhost'
 PORT = 5500
@@ -52,11 +53,11 @@ def client_communication(person):
         if msg == bytes("{quit}", "utf8"):
             client.close()
             persons.remove(person)
-            broadcast(f"{name} has left the chat...", "")
+            broadcast(bytes(f"{name} has left the chat...", "utf8"),"")
             print(f"[DISCONNECTED] {name} disconnected")
             break
         else:
-            client.send(msg, name+": ")
+            broadcast(msg, name+": ")
             print(f"{name}: ", msg.decode("utf8"))
 
 
