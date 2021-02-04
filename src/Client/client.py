@@ -1,6 +1,5 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread, Lock
-import time
 
 
 class Client:
@@ -29,6 +28,7 @@ class Client:
         while True:
             try:
                 msg = self.client_socket.recv(self.BUFSIZE).decode()
+
                 self.lock.acquire()
                 self.messages.append(msg)
                 self.lock.release()
@@ -40,18 +40,30 @@ class Client:
     def send_messages(self, msg):
         """
         send messages to server
-        :param msg:
+        :param msg: str
         :return: None
         """
-        self.client_socket.send(bytes(msg, "utf8"))
-        if msg == "{quit}":
-            self.client_socket.close()
+        try:
+            self.client_socket.send(bytes(msg, "utf8"))
+            if msg == "{quit}":
+                self.client_socket.close()
+        except Exception as e:
+            self.client_socket = socket(AF_INET, SOCK_STREAM)
+            self.client_socket.connect(self.ADDR)
+            print("[EXCEPTION]", e)
 
     def get_messages(self):
         """
         return a list of messages
-        :return:
+        :return: list[str]
         """
+        messages_copy = self.messages[:]
+
         self.lock.acquire()
+        self.messages = []
         self.lock.release()
-        return self.messages
+
+        return messages_copy
+
+    def disconnect(self):
+        self.send_messages("{quit}")
