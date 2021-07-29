@@ -11,10 +11,10 @@ ADDR = (HOST, PORT)
 MAX_CONNECTIONS = 10
 BUFSIZE =512
 
-# GLOBAL VARIABLES
+# global variables
 persons = []
-SERVER = socket(AF_INET, SOCK_STREAM)
-SERVER.bind(ADDR)   # set up server
+server = socket(af_inet, sock_stream)
+server.bind(addr)   # set up server
 
 
 def broadcast(msg, name):
