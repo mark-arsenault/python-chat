@@ -88,3 +88,14 @@ if __name__ == '__main__':
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
     SERVER.close()
+
+
+    """
+if __name__ == '__main__':
+    SERVER.listen(MAX_CONNECTIONS)    # listen for connections
+    print("[STARTED] Waiting for a connection...")
+    ACCEPT_THREAD = Thread(target=wait_for_connection)
+    ACCEPT_THREAD.start()
+    ACCEPT_THREAD.join()
+    SERVER.close()
+    """
